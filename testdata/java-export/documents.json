@@ -1,0 +1,126 @@
+{
+ "projects/p1/databases/(default)/documents/c/all": {
+  "arr": {
+   "arrayValue": {
+    "values": [
+     {
+      "integerValue": "1"
+     },
+     {
+      "stringValue": "x"
+     },
+     {
+      "mapValue": {
+       "fields": {
+        "k": {
+         "booleanValue": true
+        }
+       }
+      }
+     },
+     {
+      "nullValue": null
+     }
+    ]
+   }
+  },
+  "b": {
+   "bytesValue": "AAH/"
+  },
+  "big": {
+   "integerValue": "9007199254740993"
+  },
+  "d": {
+   "doubleValue": 3.25
+  },
+  "empty": {
+   "stringValue": ""
+  },
+  "emptyArr": {
+   "arrayValue": {}
+  },
+  "emptyMap": {
+   "mapValue": {}
+  },
+  "f": {
+   "booleanValue": false
+  },
+  "geo": {
+   "geoPointValue": {
+    "latitude": -37.8,
+    "longitude": 144.9
+   }
+  },
+  "i": {
+   "integerValue": "-42"
+  },
+  "inf": {
+   "doubleValue": "-Infinity"
+  },
+  "map": {
+   "mapValue": {
+    "fields": {
+     "a": {
+      "integerValue": "1"
+     },
+     "dotted.key": {
+      "stringValue": "v"
+     },
+     "nested": {
+      "mapValue": {
+       "fields": {
+        "deep": {
+         "arrayValue": {
+          "values": [
+           {
+            "doubleValue": 1.5
+           }
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "nan": {
+   "doubleValue": "NaN"
+  },
+  "nul": {
+   "nullValue": null
+  },
+  "ref": {
+   "referenceValue": "projects/p1/databases/(default)/documents/c/d1"
+  },
+  "s": {
+   "stringValue": "h\u00e9llo \u2713"
+  },
+  "t": {
+   "booleanValue": true
+  },
+  "ts": {
+   "timestampValue": "2024-02-29T13:14:15.123456Z"
+  }
+ },
+ "projects/p1/databases/(default)/documents/c/d1": {
+  "n": {
+   "integerValue": "1"
+  }
+ },
+ "projects/p1/databases/(default)/documents/c/d1/sub/s2": {
+  "x": {
+   "stringValue": "child"
+  }
+ },
+ "projects/p1/databases/(default)/documents/c/missingParent/sub/s1": {
+  "x": {
+   "stringValue": "orphan"
+  }
+ },
+ "projects/p2/databases/(default)/documents/other/o1": {
+  "y": {
+   "integerValue": "2"
+  }
+ }
+}

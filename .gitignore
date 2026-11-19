@@ -1,0 +1,4 @@
+conformance/bin/
+conformance/obj/
+/firestore-emulator
+/emulator

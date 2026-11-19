@@ -1,0 +1,3 @@
+# Cloud Firestore export files are binary (LevelDB log framing with CRCs).
+*export_metadata binary
+output-* binary
