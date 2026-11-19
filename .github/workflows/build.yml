@@ -1,0 +1,42 @@
+name: Build binaries
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - name: Test
+        run: go test ./...
+      - name: Build and package binaries
+        env:
+          CGO_ENABLED: '0'
+        run: |
+          mkdir -p dist
+          for os in windows linux darwin; do
+            for arch in amd64 arm64; do
+              name="firestore-emulator-$os-$arch"
+              if [[ "$os" == windows ]]; then
+                GOOS="$os" GOARCH="$arch" go build -trimpath -o firestore-emulator.exe .
+                zip "dist/$name.zip" firestore-emulator.exe LICENSE
+              else
+                GOOS="$os" GOARCH="$arch" go build -trimpath -o firestore-emulator .
+                tar -czf "dist/$name.tar.gz" firestore-emulator LICENSE
+              fi
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firestore-emulator-binaries
+          path: dist/
+          if-no-files-found: error
+          compression-level: 0
