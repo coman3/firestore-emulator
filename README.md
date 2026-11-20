@@ -25,8 +25,8 @@ It is more lenient than Firestore in a few ways, so a query can work here and fa
 environment: composite indexes aren't required, security rules aren't evaluated, and there are no
 realtime listeners.
 
-See the [benchmark results](BENCHMARK.md) for startup time, project import time, and memory use
-compared with the Java Firestore emulator.
+See the [benchmark results](BENCHMARK.md) for query latency, startup, import time, and memory use
+across 5,000, 10,000, and 100,000 seeded documents on both emulators.
 
 ## Development note
 
