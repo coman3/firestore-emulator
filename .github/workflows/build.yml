@@ -3,6 +3,7 @@ name: Build binaries
 on:
   push:
     branches: [main]
+    paths-ignore: [BENCHMARK.md]
     tags: ["v[0-9]*"]
 
 permissions:

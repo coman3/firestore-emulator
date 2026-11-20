@@ -1,0 +1,39 @@
+name: Compare emulators
+
+on: workflow_dispatch
+
+concurrency: benchmark-main
+
+jobs:
+  benchmark:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Prepare emulators
+        run: |
+          go build -o "$RUNNER_TEMP/firestore-emulator" .
+          cd "$RUNNER_TEMP"
+          jar=cloud-firestore-emulator-v1.22.0.jar
+          curl -fsSLO --retry 3 "https://storage.googleapis.com/firebase-preview-drop/emulator/$jar"
+          echo "9b6498b7f62714d67f48f59b3818883cd682dbcd46b9f59511de81c97bb5166c  $jar" | sha256sum -c -
+      - name: Measure startup, import and memory
+        run: python3 scripts/benchmark.py "$RUNNER_TEMP/firestore-emulator" "$RUNNER_TEMP/cloud-firestore-emulator-v1.22.0.jar"
+      - name: Commit benchmark report
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add BENCHMARK.md
+          git commit -m 'Refresh emulator benchmark'
+          git pull --rebase origin main
+          git push origin HEAD:main

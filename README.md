@@ -25,12 +25,8 @@ It is more lenient than Firestore in a few ways, so a query can work here and fa
 environment: composite indexes aren't required, security rules aren't evaluated, and there are no
 realtime listeners.
 
-Measured on the same machine with 23,400 documents across 13 projects, then rewritten 8 times:
-
-| | Idle | After load | After 8 rewrites | Load | 78 queries |
-|---|---|---|---|---|---|
-| Java emulator (original benchmark JVM settings) | 146 MB | 490 MB | 1,444 MB | 6.3 s | 1.88 s |
-| This emulator | 12 MB | 49 MB | 55 MB | 1.8 s | 0.40 s |
+See the [benchmark results](BENCHMARK.md) for startup time, project import time, and memory use
+compared with the Java Firestore emulator.
 
 ## Development note
 
