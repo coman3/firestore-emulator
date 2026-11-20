@@ -32,7 +32,17 @@ Measured on the same machine with 23,400 documents across 13 projects, then rewr
 | Java emulator (original benchmark JVM settings) | 146 MB | 490 MB | 1,444 MB | 6.3 s | 1.88 s |
 | This emulator | 12 MB | 49 MB | 55 MB | 1.8 s | 0.40 s |
 
+## Development note
+
+This emulator was developed with AI assistance. When we released v0.1, we had used it internally
+for over two weeks without encountering any issues. That experience covers the Firestore features
+our applications exercise.
+
 ## Run it
+
+Download the archive for your OS and CPU from the [latest release](https://github.com/coman3/firestore-emulator/releases/latest).
+Extract it and run `./firestore-emulator` (or `.\firestore-emulator.exe` in Windows PowerShell).
+The default address is `127.0.0.1:8080`.
 
 With Go 1.24 or later, run this from the repository root.
 
@@ -50,6 +60,36 @@ export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
 Documents live in memory until the process exits. Export any data you want to keep.
 
 `GOGC` defaults to 50; set it to trade memory for CPU.
+
+## Snapshots for end-to-end tests
+
+Seed a project once through your application or Firestore client. After the seed writes finish,
+export the database to a named directory. The emulator reads and writes these paths on its own
+filesystem. This example runs the shell and emulator on the same machine.
+
+```bash
+admin=http://127.0.0.1:8080/emulator/v1/projects/demo-e2e
+mkdir -p "$PWD/snapshots"
+curl -fsS "$admin:export" -H 'Content-Type: application/json' \
+  -d "{\"export_directory\":\"$PWD/snapshots\",\"export_name\":\"baseline\"}"
+```
+
+Keep the whole `snapshots/baseline` directory together. Before each test run, stop any writers,
+clear the test database, and import the baseline. Import creates or overwrites the exported
+documents. Clearing first also removes documents left behind by earlier tests.
+
+```bash
+curl -fsS -X DELETE "$admin/databases/(default)/documents" &&
+  curl -fsS "$admin:import" -H 'Content-Type: application/json' \
+    -d "{\"export_directory\":\"$PWD/snapshots/baseline\"}"
+```
+
+For parallel tests, give each worker its own project ID and import the baseline into that
+project. Document paths are restored under the target database. Stored document-reference
+values retain their original project, so seed those references for the worker when needed.
+For a named database, include `"database": "projects/demo-e2e/databases/my-db"` in both POST
+bodies and use `my-db` in the DELETE URL. Each export captures one database. To reproduce a
+failed run, export its state under a fresh name before teardown.
 
 ## Test it
 
@@ -74,3 +114,16 @@ diff java.txt lite.txt
 The two expected differences are Java emulator limitations, where this emulator returns what
 Firestore does: Java rejects descending document-id order ("does not support descending key
 scans") and returns `0`/`null` for `Sum`/`Average` requested through the .NET client.
+
+## Cut a release
+
+Tag the commit you want to ship and push the tag. For example, to release v0.2 from `main`:
+
+```bash
+git switch main && git pull --ff-only &&
+  git tag -a v0.2 -m "Release v0.2" && git push origin v0.2
+```
+
+GitHub Actions tests the tagged commit, builds all six archives, and publishes them on a
+GitHub Release named after the tag. Each release includes Windows, Linux, and macOS binaries
+for amd64 and arm64.
